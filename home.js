@@ -56,7 +56,7 @@ document.getElementById(id).classList.remove("border-gray-300")
 
 
 
-// add money feature
+// add money 
 
 document.getElementById("add-money-btn").addEventListener("click",function(e){
     e.preventDefault()
@@ -103,7 +103,7 @@ document.getElementById("add-money-btn").addEventListener("click",function(e){
 })
 
 
-//cashout money feature
+//cashout money 
 
 document.getElementById("withdraw-btn").addEventListener("click",function(e){
     e.preventDefault()
@@ -192,4 +192,10 @@ document.getElementById("bill-button").addEventListener("click",function(){
 document.getElementById("transactions-button").addEventListener("click",function(){
     handleToggle("transactions-parent")
     handleButtonToggle("transactions-button")
+})
+
+// Logout
+document.getElementById("logout-btn").addEventListener("click",function(){
+    
+    window.location.href = "index.html"
 })
