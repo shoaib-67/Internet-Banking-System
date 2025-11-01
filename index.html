@@ -11,23 +11,27 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-    <body class="bg-[#f4f5f7] h-[100vh] flex flex-col justify-center items-center">
-        <div class="h-[130px] w-[300px] bg-[url(./assets/bg.png)] bg-cover flex justify-center items-center">
-            <img src="./assets/Group.png" alt="">
+    <body class="bg-[#f4f5f7] min-h-[100vh] flex flex-col justify-center items-center px-4 py-8">
+        <div class="h-[130px] w-full max-w-[300px] bg-[url(./assets/bg.png)] bg-cover flex justify-center items-center">
+            <img src="./assets/Group.png" alt="" class="max-w-[80%]">
         </div>
-        <form class=" w-[350px] bg-white rounded-2xl p-8">
+        <form class="w-full max-w-[350px] bg-white rounded-2xl p-6 sm:p-8">
             <div>
-                <label class="font-semibold" for="">Mobile Number</label>
+                <label class="font-semibold text-sm sm:text-base" for="">Mobile Number</label>
                 <br/>
-                <input type="text" placeholder="Enter Your Number" id="mobile-number" class="input bg-[#f4f5f7] mt-3 rounded-3xl" />
+                <input type="text" placeholder="Enter Your Number" id="mobile-number" class="input bg-[#f4f5f7] mt-3 rounded-3xl w-full text-sm sm:text-base" />
             </div>
             <div class="mt-5">
-                <label class="font-semibold" for="">4 Digit Pin</label>
+                <label class="font-semibold text-sm sm:text-base" for="">4 Digit Pin</label>
                 <br/>
-                <input type="text" placeholder="Enter 4 Digit Pin" id="pin-number" class="input bg-[#f4f5f7] mt-3 rounded-3xl" />
+                <input type="text" placeholder="Enter 4 Digit Pin" id="pin-number" class="input bg-[#f4f5f7] mt-3 rounded-3xl w-full text-sm sm:text-base" />
             </div>
 
-            <button class="btn text-white bg-[#0874F2]  mt-5 w-full rounded-3xl" id="loginButton">Login</button>
+            <button class="btn text-white bg-[#0874F2] mt-5 w-full rounded-3xl text-sm sm:text-base" id="loginButton">Login</button>
+            
+            <div class="text-center mt-4">
+                <a href="create-account.html" class="text-[#0874F2] underline hover:text-[#0660c9] cursor-pointer">Create Account</a>
+            </div>
         </form>
 
         <!-- Js file -->

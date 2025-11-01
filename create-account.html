@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payoooo</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-[#f4f5f7] min-h-[100vh] flex flex-col justify-center items-center py-8 px-4">
+    <div class="h-[130px] w-full max-w-[300px] bg-[url(./assets/bg.png)] bg-cover flex justify-center items-center">
+        <img src="./assets/Group.png" alt="" class="max-w-[80%]">
+    </div>
+    
+    <form class="w-full max-w-[350px] bg-white rounded-2xl p-6 sm:p-8 mt-5">
+        <h1 class="text-xl sm:text-2xl font-bold text-center mb-6">Create Account</h1>
+        
+        <div class="mb-4">
+            <label class="font-semibold text-sm sm:text-base" for="full-name">Full Name</label>
+            <br/>
+            <input type="text" placeholder="Enter your full name" id="full-name" class="input bg-[#f4f5f7] mt-2 rounded-3xl w-full text-sm sm:text-base" />
+        </div>
+        
+        <div class="mb-4">
+            <label class="font-semibold text-sm sm:text-base" for="email">Email Address</label>
+            <br/>
+            <input type="email" placeholder="Enter your email" id="email" class="input bg-[#f4f5f7] mt-2 rounded-3xl w-full text-sm sm:text-base" />
+        </div>
+        
+        <div class="mb-4">
+            <label class="font-semibold text-sm sm:text-base" for="create-mobile">Mobile Number</label>
+            <br/>
+            <input type="text" placeholder="Enter your mobile number" id="create-mobile" class="input bg-[#f4f5f7] mt-2 rounded-3xl w-full text-sm sm:text-base" />
+        </div>
+        
+        <div class="mb-4">
+            <label class="font-semibold text-sm sm:text-base" for="create-pin">Create 4 Digit PIN</label>
+            <br/>
+            <input type="password" placeholder="Enter 4 digit PIN" id="create-pin" maxlength="4" class="input bg-[#f4f5f7] mt-2 rounded-3xl w-full text-sm sm:text-base" />
+        </div>
+        
+        <div class="mb-4">
+            <label class="font-semibold text-sm sm:text-base" for="confirm-pin">Confirm PIN</label>
+            <br/>
+            <input type="password" placeholder="Re-enter your PIN" id="confirm-pin" maxlength="4" class="input bg-[#f4f5f7] mt-2 rounded-3xl w-full text-sm sm:text-base" />
+        </div>
+
+        <button class="btn text-white bg-[#0874F2] mt-5 w-full rounded-3xl text-sm sm:text-base" id="create-account-btn">Create Account</button>
+        
+        <div class="text-center mt-4">
+            <span class="text-gray-600 text-sm sm:text-base">Already have an account? </span>
+            <a href="index.html" class="text-[#0874F2] underline hover:text-[#0660c9] text-sm sm:text-base">Login</a>
+        </div>
+    </form>
+
+    <!-- Js file -->
+    <script src="./create-account.js"></script>
+</body>
+</html>
