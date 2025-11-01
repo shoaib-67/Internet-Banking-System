@@ -133,9 +133,69 @@ document.getElementById("withdraw-btn").addEventListener("click",function(e){
 })
 
 
+// Pay bill feature
+
+document.getElementById("pay-bill-btn").addEventListener("click",function(e){
+    e.preventDefault()
+    
+    const billType = getInputValue("bill-type")
+    const billAccount = getInputValue("bill-account")
+    const amount = getInputValueNumber("bill-amount")
+    const pinNumber = getInputValueNumber("bill-pin")
+
+    const availableBalance = getInnerText("available-balance")
+
+    // Validation
+    if(!billType || billType === ""){
+        alert("Please select a bill type")
+        return
+    }
+
+    if(!billAccount || billAccount.trim() === ""){
+        alert("Please enter bill account/reference number")
+        return
+    }
+
+    if(amount <= 0){
+        alert("Invalid amount")
+        return
+    }
+
+    if(amount > availableBalance){
+        alert("Insufficient balance")
+        return
+    }
+
+    if(pinNumber !== validPin){
+        alert("Invalid pin number")
+        return
+    }
+
+    // Process payment
+    const totalNewAvailableBalance = availableBalance - amount
+    setInnerText(totalNewAvailableBalance)
+
+    // Record transaction
+    const data = {
+        name: `${billType} - ${billAccount}`,
+        date: new Date().toLocaleTimeString()
+    }
+
+    transactionData.push(data)
+    console.log(transactionData)
+
+    // Clear form
+    document.getElementById("bill-type").value = ""
+    document.getElementById("bill-account").value = ""
+    document.getElementById("bill-amount").value = ""
+    document.getElementById("bill-pin").value = ""
+
+    alert(`${billType} payment successful! Amount: $${amount}`)
+})
+
+
 document.getElementById("transactions-button").addEventListener("click",function(){
     const transactionContainer = document.getElementById("transaction-container")
-    transactionContainer.innerText = ""
 
     for(const data of transactionData){
         const div = document.createElement("div")
@@ -196,6 +256,5 @@ document.getElementById("transactions-button").addEventListener("click",function
 
 // Logout
 document.getElementById("logout-btn").addEventListener("click",function(){
-    
-    window.location.href = "index.html"
+    window.location.href = "index.html";
 })

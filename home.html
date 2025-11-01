@@ -151,6 +151,33 @@
          <!-- pay bill -->
          <div class="form" id="pay-bill-parent" style="display:none">
           <h1 class="my-5 font-bold">Pay Bill</h1>
+          <form action="" class="bg-white rounded-2xl p-8">
+              <div class="mb-3">
+                  <h1 class="font-semibold">Select Bill Type</h1>
+                  <select id="bill-type" class="select bg-[#f4f5f7] mt-3 rounded-3xl w-full">
+                      <option value="">Select bill type</option>
+                      <option value="Electricity Bill">Electricity Bill</option>
+                      <option value="Internet Bill">Internet Bill</option>
+                      <option value="Water Bill">Water Bill</option>
+                      <option value="Gas Bill">Gas Bill</option>
+                      <option value="Education Fee">Education Fee</option>
+                      <option value="Donation">Donation</option>
+                  </select>
+              </div>
+              <div class="mb-3">
+                  <h1 class="font-semibold">Bill Account/Reference Number</h1>
+                  <input id="bill-account" type="text" placeholder="Enter account or reference number" class="input bg-[#f4f5f7] mt-3 rounded-3xl w-full" />
+              </div>
+              <div class="mb-3">
+                  <h1 class="font-semibold">Amount</h1>
+                  <input id="bill-amount" type="text" placeholder="Enter amount" class="input bg-[#f4f5f7] mt-3 rounded-3xl w-full" />
+              </div>
+              <div class="mb-3">
+                  <h1 class="font-semibold">Pin Number</h1>
+                  <input id="bill-pin" type="password" placeholder="Enter your pin" class="input bg-[#f4f5f7] mt-3 rounded-3xl w-full" />
+              </div>
+              <button id="pay-bill-btn" class="btn bg-[#0874f2] text-white w-full rounded-3xl">Pay Bill</button>
+          </form>
          </div>
          <div class="form" id="transactions-parent" style="display:none">
           <div class="flex justify-between items-center">
