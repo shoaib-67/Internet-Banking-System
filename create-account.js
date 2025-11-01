@@ -1,8 +1,8 @@
-// Create Account functionality
+// Create Account 
 document.getElementById("create-account-btn").addEventListener("click", function(e) {
     e.preventDefault()
     
-    // Get all input values
+    // Get all input 
     const fullName = document.getElementById("full-name").value.trim()
     const email = document.getElementById("email").value.trim()
     const mobile = document.getElementById("create-mobile").value.trim()
@@ -62,21 +62,20 @@ document.getElementById("create-account-btn").addEventListener("click", function
         return
     }
     
-    // Success - Store account data in localStorage (for demo purposes)
+    // Success
     const accountData = {
         name: fullName,
         email: email,
         mobile: mobile,
         pin: pin,
-        balance: 5000 // Starting balance
+        balance: 5000
     }
     
-    // Store in localStorage
+
     localStorage.setItem("userAccount", JSON.stringify(accountData))
     
-    // Success message and redirect
     alert(`Account created successfully!\n\nName: ${fullName}\nMobile: ${mobile}\nEmail: ${email}\n\nYour starting balance is $5000.\n\nRedirecting to login page...`)
     
-    // Redirect to login page
+    
     window.location.href = "index.html"
 })
