@@ -1,8 +1,8 @@
 // login 
 document.getElementById("loginButton").addEventListener("click",function (e){
     e.preventDefault()
-    const mobileNumber = 12345678910
-    const pin = 1234
+    const mobileNumber = 12345678910;
+    const pin = 1234;
     
     const mobileNumberValue = document.getElementById
     ("mobile-number").value

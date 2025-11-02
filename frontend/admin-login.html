@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Payoooo</title>
+    <link rel="icon" type="image/png" href="./assets/payoo.png">
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
+      integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-[#f4f5f7] min-h-[100vh] flex flex-col justify-center items-center px-4 py-8">
+    <div class="h-[130px] w-full max-w-[300px] bg-[url(./assets/bg.png)] bg-cover flex justify-center items-center">
+        <img src="./assets/Group.png" alt="" class="max-w-[80%]">
+    </div>
+    
+    <form class="w-full max-w-[350px] bg-white rounded-2xl p-6 sm:p-8 mt-5">
+        <div class="text-center mb-6">
+            <i class="fa-solid fa-user-shield text-4xl text-gray-700"></i>
+            <h1 class="text-xl sm:text-2xl font-bold mt-3">Admin Login</h1>
+        </div>
+        
+        <div>
+            <label class="font-semibold text-sm sm:text-base" for="admin-username">Username</label>
+            <br/>
+            <input type="text" placeholder="Enter admin username" id="admin-username" class="input bg-[#f4f5f7] mt-3 rounded-3xl w-full text-sm sm:text-base" />
+        </div>
+        
+        <div class="mt-5">
+            <label class="font-semibold text-sm sm:text-base" for="admin-password">Password</label>
+            <br/>
+            <input type="password" placeholder="Enter admin password" id="admin-password" class="input bg-[#f4f5f7] mt-3 rounded-3xl w-full text-sm sm:text-base" />
+        </div>
+
+        <button class="btn text-white bg-gray-700 hover:bg-gray-800 mt-5 w-full rounded-3xl text-sm sm:text-base" id="admin-login-submit">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            Login as Admin
+        </button>
+        
+        <div class="text-center mt-4">
+            <a href="index.html" class="text-[#0874F2] underline hover:text-[#0660c9] text-sm sm:text-base">
+                <i class="fa-solid fa-arrow-left"></i> Back to User Login
+            </a>
+        </div>
+    </form>
+
+    <!-- Js file -->
+    <script src="./admin-login.js"></script>
+</body>
+</html>
