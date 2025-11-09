@@ -52,14 +52,14 @@ router.post('/take-loan', authenticateToken, async (req, res) => {
   try {
     await connection.beginTransaction();
 
-    const { loanType, amount, duration, purpose } = req.body;
+    const { bank, loanType, amount, duration, purpose } = req.body;
 
     // Validation
-    if (!loanType || !duration) {
+    if (!bank || !loanType || !amount || !duration) {
       await connection.rollback();
       return res.status(400).json({ 
         status: 'error', 
-        message: 'Loan type and duration are required' 
+        message: 'All fields are required (bank, loanType, amount, duration)' 
       });
     }
 
@@ -150,6 +150,12 @@ router.post('/take-loan', authenticateToken, async (req, res) => {
     const [paymentResult] = await connection.query(
       'INSERT INTO payment_service (AccountID, Amount, PaymentDate, Status, BillType, Receiver, Operation, PhoneNo) VALUES (?, ?, NOW(), ?, ?, ?, ?, ?)',
       [req.user.accountId, amount, 'Completed', 'LoanApproval', 'Loan Department', 'Credit', req.user.phone]
+    );
+
+    // Record in RECORDS table
+    await connection.query(
+      'INSERT INTO records (Account_ID, Amount, Date, Status) VALUES (?, ?, NOW(), ?)',
+      [req.user.accountId, amount, 'Completed']
     );
 
     // Create REPAYMENT record
@@ -325,6 +331,12 @@ router.post('/pay-loan', authenticateToken, async (req, res) => {
     await connection.query(
       'INSERT INTO payment_service (AccountID, Amount, PaymentDate, Status, BillType, Receiver, Operation, PhoneNo) VALUES (?, ?, NOW(), ?, ?, ?, ?, ?)',
       [req.user.accountId, amount, 'Completed', 'LoanRepayment', 'Loan Department', 'Debit', req.user.phone]
+    );
+
+    // Record in RECORDS table
+    await connection.query(
+      'INSERT INTO records (Account_ID, Amount, Date, Status) VALUES (?, ?, NOW(), ?)',
+      [req.user.accountId, amount, 'Completed']
     );
 
     await connection.commit();

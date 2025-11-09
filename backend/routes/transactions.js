@@ -75,6 +75,12 @@ router.post('/add-money', authenticateToken, async (req, res) => {
       [req.user.accountId, amount, 'Completed', 'Deposit', 'Self', 'Credit', req.user.phone]
     );
 
+    // Record in RECORDS table
+    await connection.query(
+      'INSERT INTO records (Account_ID, Amount, Date, Status) VALUES (?, ?, NOW(), ?)',
+      [req.user.accountId, amount, 'Completed']
+    );
+
     await connection.commit();
 
     res.json({ 
@@ -146,6 +152,12 @@ router.post('/cash-out', authenticateToken, async (req, res) => {
     await connection.query(
       'INSERT INTO payment_service (AccountID, Amount, PaymentDate, Status, BillType, Receiver, Operation, PhoneNo) VALUES (?, ?, NOW(), ?, ?, ?, ?, ?)',
       [req.user.accountId, amount, 'Completed', 'Withdrawal', 'Cash', 'Debit', req.user.phone]
+    );
+
+    // Record in RECORDS table
+    await connection.query(
+      'INSERT INTO records (Account_ID, Amount, Date, Status) VALUES (?, ?, NOW(), ?)',
+      [req.user.accountId, amount, 'Completed']
     );
 
     await connection.commit();
@@ -267,6 +279,18 @@ router.post('/transfer', authenticateToken, async (req, res) => {
       [recipientAccount.AccountID, amount, 'Completed', 'Transfer', senderAccount.Account_No, 'Credit', phone || '']
     );
 
+    // Record in RECORDS table for sender
+    await connection.query(
+      'INSERT INTO records (Account_ID, Amount, Date, Status) VALUES (?, ?, NOW(), ?)',
+      [senderAccount.AccountID, amount, 'Completed']
+    );
+
+    // Record in RECORDS table for recipient
+    await connection.query(
+      'INSERT INTO records (Account_ID, Amount, Date, Status) VALUES (?, ?, NOW(), ?)',
+      [recipientAccount.AccountID, amount, 'Completed']
+    );
+
     await connection.commit();
 
     res.json({ 
@@ -291,26 +315,27 @@ router.post('/transfer', authenticateToken, async (req, res) => {
   }
 });
 
-// Get transaction history from PAYMENT_SERVICE
+// Get transaction history from RECORDS table
 router.get('/history', authenticateToken, async (req, res) => {
   try {
     const [transactions] = await db.query(
-      'SELECT * FROM payment_service WHERE AccountID = ? ORDER BY PaymentDate DESC LIMIT 50',
+      'SELECT * FROM records WHERE Account_ID = ? ORDER BY Date DESC LIMIT 50',
       [req.user.accountId]
     );
 
     res.json({ 
       status: 'success',
-      data: transactions.map(t => ({
-        id: t.PaymentID,
-        amount: parseFloat(t.Amount),
-        date: t.PaymentDate,
-        status: t.Status,
-        billType: t.BillType,
-        receiver: t.Receiver,
-        operation: t.Operation,
-        phoneNo: t.PhoneNo
-      }))
+      data: {
+        transactions: transactions.map(t => ({
+          id: t.Transaction_ID,
+          amount: parseFloat(t.Amount),
+          date: t.Date,
+          status: t.Status,
+          billType: 'Transaction',
+          receiver: 'Self',
+          operation: parseFloat(t.Amount) > 0 ? 'Credit' : 'Debit'
+        }))
+      }
     });
 
   } catch (error) {

@@ -68,6 +68,12 @@ router.post('/pay', authenticateToken, async (req, res) => {
       [req.user.accountId, amount, 'Completed', billType, receiver, 'Debit', referenceNumber || req.user.phone]
     );
 
+    // Record in RECORDS table
+    await connection.query(
+      'INSERT INTO records (Account_ID, Amount, Date, Status) VALUES (?, ?, NOW(), ?)',
+      [req.user.accountId, amount, 'Completed']
+    );
+
     await connection.commit();
 
     res.json({ 

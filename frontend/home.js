@@ -17,6 +17,9 @@ function logout() {
     window.location.href = './index.html';
 }
 
+// Attach logout event listener
+document.getElementById("logout-btn")?.addEventListener("click", logout);
+
 // Helper functions
 function getInputValue(id) {
     return document.getElementById(id)?.value || '';
@@ -74,8 +77,11 @@ async function loadBalance() {
 // Load transaction history
 async function loadTransactionHistory() {
     try {
+        console.log('Loading transaction history...');
         const result = await apiCall(API_CONFIG.ENDPOINTS.TRANSACTION_HISTORY);
+        console.log('History result:', result);
         if (result.status === 'success') {
+            console.log('Transactions:', result.data.transactions);
             displayTransactionHistory(result.data.transactions);
         }
     } catch (error) {
@@ -84,19 +90,28 @@ async function loadTransactionHistory() {
 }
 
 function displayTransactionHistory(transactions) {
-    const historyContainer = document.getElementById("transaction-history");
-    if (!historyContainer) return;
+    console.log('Displaying transactions:', transactions);
+    const historyContainer = document.getElementById("transaction-container");
+    console.log('History container:', historyContainer);
+    
+    if (!historyContainer) {
+        console.error('Transaction container not found!');
+        return;
+    }
     
     historyContainer.innerHTML = '';
     
     if (!transactions || transactions.length === 0) {
-        historyContainer.innerHTML = '<p class="text-center text-gray-500">No transactions yet</p>';
+        console.log('No transactions to display');
+        historyContainer.innerHTML = '<p class="text-center text-gray-500 py-4">No transactions yet</p>';
         return;
     }
     
+    console.log(`Displaying ${transactions.length} transactions`);
+    
     transactions.forEach(tx => {
-        const date = new Date(tx.PaymentDate).toLocaleString();
-        const isCredit = tx.Operation === 'Credit';
+        const date = new Date(tx.date).toLocaleString();
+        const isCredit = tx.operation === 'Credit';
         const colorClass = isCredit ? 'text-green-600' : 'text-red-600';
         const sign = isCredit ? '+' : '-';
         
@@ -105,14 +120,17 @@ function displayTransactionHistory(transactions) {
         txElement.innerHTML = `
             <div class="flex justify-between items-center">
                 <div>
-                    <p class="font-semibold">${tx.BillType}</p>
+                    <p class="font-semibold">${tx.billType}</p>
                     <p class="text-sm text-gray-500">${date}</p>
+                    ${tx.receiver !== 'Self' ? `<p class="text-xs text-gray-400">To: ${tx.receiver}</p>` : ''}
                 </div>
-                <p class="${colorClass} font-bold">${sign}৳${parseFloat(tx.Amount).toFixed(2)}</p>
+                <p class="${colorClass} font-bold">${sign}৳${parseFloat(tx.amount).toFixed(2)}</p>
             </div>
         `;
         historyContainer.appendChild(txElement);
     });
+    
+    console.log('Transactions displayed successfully');
 }
 
 // ADD MONEY
@@ -309,12 +327,14 @@ if (takeLoanBtn) {
     takeLoanBtn.addEventListener("click", async function (e) {
         e.preventDefault();
         
+        const bank = getInputValue("loan-bank");
         const loanType = getInputValue("loan-type");
         const amount = getInputValueNumber("loan-amount");
         const duration = getInputValueNumber("loan-duration");
+        const purpose = getInputValue("loan-purpose");
         
-        if (!loanType || amount <= 0 || duration <= 0) {
-            alert("Please fill in all loan details");
+        if (!bank || !loanType || amount <= 0 || duration <= 0) {
+            alert("Please fill in all loan details including bank selection");
             return;
         }
         
@@ -323,10 +343,11 @@ if (takeLoanBtn) {
         
         try {
             const result = await apiCall(API_CONFIG.ENDPOINTS.TAKE_LOAN, 'POST', {
+                bank,
                 loanType,
                 amount,
                 duration,
-                purpose: "Personal use"
+                purpose: purpose || "Personal use"
             });
             
             if (result.status === 'success') {
@@ -351,3 +372,133 @@ if (takeLoanBtn) {
 if (document.getElementById("loan-eligibility-message")) {
     checkLoanEligibility();
 }
+
+// LOAN TAB SWITCHING
+const takeLoanTab = document.getElementById("take-loan-tab");
+const payLoanTab = document.getElementById("pay-loan-tab");
+const takeLoanForm = document.getElementById("take-loan-form");
+const payLoanForm = document.getElementById("pay-loan-form");
+
+if (takeLoanTab && payLoanTab && takeLoanForm && payLoanForm) {
+    takeLoanTab.addEventListener("click", function() {
+        takeLoanForm.style.display = "block";
+        payLoanForm.style.display = "none";
+        takeLoanTab.classList.remove("bg-gray-300", "text-gray-700");
+        takeLoanTab.classList.add("bg-[#0874F2]", "text-white");
+        payLoanTab.classList.remove("bg-[#0874F2]", "text-white");
+        payLoanTab.classList.add("bg-gray-300", "text-gray-700");
+    });
+
+    payLoanTab.addEventListener("click", async function() {
+        takeLoanForm.style.display = "none";
+        payLoanForm.style.display = "block";
+        payLoanTab.classList.remove("bg-gray-300", "text-gray-700");
+        payLoanTab.classList.add("bg-[#0874F2]", "text-white");
+        takeLoanTab.classList.remove("bg-[#0874F2]", "text-white");
+        takeLoanTab.classList.add("bg-gray-300", "text-gray-700");
+        
+        // Load active loan details
+        await loadActiveLoan();
+    });
+}
+
+// LOAD ACTIVE LOAN
+async function loadActiveLoan() {
+    try {
+        const result = await apiCall(API_CONFIG.ENDPOINTS.ACTIVE_LOANS);
+        console.log('Active loan result:', result);
+        
+        if (result.status === 'success' && result.data) {
+            const loan = result.data;
+            document.getElementById("loan-balance").textContent = parseFloat(loan.outstandingBalance || 0).toFixed(2);
+            document.getElementById("loan-bank-display").textContent = loan.loanType || "N/A";
+            
+            const payLoanBank = document.getElementById("pay-loan-bank");
+            if (payLoanBank) {
+                payLoanBank.disabled = false;
+            }
+        } else {
+            document.getElementById("loan-balance").textContent = "0";
+            document.getElementById("loan-bank-display").textContent = "N/A";
+            const payLoanBank = document.getElementById("pay-loan-bank");
+            if (payLoanBank) {
+                payLoanBank.disabled = true;
+            }
+        }
+    } catch (error) {
+        console.error('Failed to load active loan:', error);
+        document.getElementById("loan-balance").textContent = "0";
+        document.getElementById("loan-bank-display").textContent = "N/A";
+    }
+}
+
+// PAY LOAN
+const payLoanBtn = document.getElementById("pay-loan-btn");
+if (payLoanBtn) {
+    payLoanBtn.addEventListener("click", async function (e) {
+        e.preventDefault();
+        
+        const amount = getInputValueNumber("pay-loan-amount");
+        
+        if (amount <= 0) {
+            alert("Please enter a valid payment amount");
+            return;
+        }
+        
+        if (amount < 100) {
+            alert("Minimum payment amount is ৳100");
+            return;
+        }
+        
+        payLoanBtn.disabled = true;
+        payLoanBtn.textContent = "Processing...";
+        
+        try {
+            const result = await apiCall(API_CONFIG.ENDPOINTS.PAY_LOAN, 'POST', { amount });
+            
+            if (result.status === 'success') {
+                alert(`Loan payment of ৳${amount} successful!`);
+                setInnerText(result.data.newBalance);
+                loadTransactionHistory();
+                loadActiveLoan();
+                document.getElementById("pay-loan-amount").value = '';
+            }
+        } catch (error) {
+            alert(error.message || 'Loan payment failed');
+        } finally {
+            payLoanBtn.disabled = false;
+            payLoanBtn.textContent = "Pay Loan";
+        }
+    });
+}
+
+// Form switching event listeners
+document.getElementById("add-button")?.addEventListener("click", function() {
+    handleToggle("add-money-parent");
+    handleButtonToggle("add-button");
+});
+
+document.getElementById("cash-out-button")?.addEventListener("click", function() {
+    handleToggle("cash-out-parent");
+    handleButtonToggle("cash-out-button");
+});
+
+document.getElementById("transfer-button")?.addEventListener("click", function() {
+    handleToggle("transfer-money-parent");
+    handleButtonToggle("transfer-button");
+});
+
+document.getElementById("bonus-button")?.addEventListener("click", function() {
+    handleToggle("get-bonus-parent");
+    handleButtonToggle("bonus-button");
+});
+
+document.getElementById("bill-button")?.addEventListener("click", function() {
+    handleToggle("pay-bill-parent");
+    handleButtonToggle("bill-button");
+});
+
+document.getElementById("transactions-button")?.addEventListener("click", function() {
+    handleToggle("transactions-parent");
+    handleButtonToggle("transactions-button");
+});
