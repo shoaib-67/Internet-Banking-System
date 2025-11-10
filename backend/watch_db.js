@@ -10,13 +10,13 @@ async function watchDatabase() {
     database: 'team06'
   });
 
-  console.log('👀 Watching team06 database for changes...\n');
+  console.log(' Watching team06 database for changes...\n');
   console.log('Press Ctrl+C to stop\n');
 
   setInterval(async () => {
     try {
       console.clear();
-      console.log('🔄 Database Status - ' + new Date().toLocaleTimeString());
+      console.log(' Database Status - ' + new Date().toLocaleTimeString());
       console.log('='.repeat(60));
 
       const tables = ['account', 'customer', 'loan', 'payment_service', 'repayment', 'takes'];
