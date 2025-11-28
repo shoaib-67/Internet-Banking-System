@@ -409,7 +409,7 @@ This project is developed for educational purposes.
 - Transactions use database transactions for atomicity
 - Foreign key constraints ensure data integrity
 - JWT tokens expire after 24 hours
-- Default starting balance: ₹1,000
+- Default starting balance: 1,000
 - Account numbers auto-generated: ACC0001, ACC0002, etc.
 
 ---
