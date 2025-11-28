@@ -381,7 +381,7 @@ Internet_Banking_System/
 
 ---
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 - Email notifications for transactions
 - OTP-based authentication
