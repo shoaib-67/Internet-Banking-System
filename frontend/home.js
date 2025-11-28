@@ -110,17 +110,62 @@ function displayTransactionHistory(transactions) {
     console.log(`Displaying ${transactions.length} transactions`);
     
     transactions.forEach(tx => {
+        // Map billType to user-friendly names
+        let displayName = tx.billType;
+        switch(tx.billType) {
+            case 'Deposit':
+                displayName = 'Add Money';
+                break;
+            case 'Withdrawal':
+                displayName = 'Cash Out';
+                break;
+            case 'Transfer':
+                displayName = 'Transfer';
+                break;
+            case 'LoanApproval':
+                displayName = 'Loan Taken';
+                break;
+            case 'LoanRepayment':
+                displayName = 'Loan Payment';
+                break;
+            default:
+                if (tx.billType && tx.billType !== 'Transaction') {
+                    displayName = `Bill Payment - ${tx.billType}`;
+                } else {
+                    displayName = 'Transaction';
+                }
+        }
+        
         const date = new Date(tx.date).toLocaleString();
-        const isCredit = tx.operation === 'Credit';
-        const colorClass = isCredit ? 'text-green-600' : 'text-red-600';
-        const sign = isCredit ? '+' : '-';
+        
+        // Determine sign and color based on transaction type
+        let sign, colorClass;
+        
+        if (tx.billType === 'LoanApproval') {
+            // Taking loan: + (green) - money coming in
+            sign = '+';
+            colorClass = 'text-green-600';
+        } else if (tx.billType === 'LoanRepayment') {
+            // Paying loan: - (red) - money going out
+            sign = '-';
+            colorClass = 'text-red-600';
+        } else if (tx.billType === 'Withdrawal') {
+            // Cash Out: - (red)
+            sign = '-';
+            colorClass = 'text-red-600';
+        } else {
+            // Other transactions: follow operation (Credit = +, Debit = -)
+            const isCredit = tx.operation === 'Credit';
+            sign = isCredit ? '+' : '-';
+            colorClass = isCredit ? 'text-green-600' : 'text-red-600';
+        }
         
         const txElement = document.createElement('div');
         txElement.className = 'p-4 bg-white rounded-lg shadow mb-2';
         txElement.innerHTML = `
             <div class="flex justify-between items-center">
                 <div>
-                    <p class="font-semibold">${tx.billType}</p>
+                    <p class="font-semibold">${displayName}</p>
                     <p class="text-sm text-gray-500">${date}</p>
                     ${tx.receiver !== 'Self' ? `<p class="text-xs text-gray-400">To: ${tx.receiver}</p>` : ''}
                 </div>
@@ -156,7 +201,14 @@ if (addMoneyBtn) {
                 alert(`Successfully added ৳${amount}`);
                 setInnerText(result.data.newBalance);
                 loadTransactionHistory();
-                document.getElementById("add-amount").value = '';
+                const bank = document.getElementById("bank");
+                const accountNum = document.getElementById("account-number");
+                const addAmount = document.getElementById("add-amount");
+                const addPin = document.getElementById("add-pin");
+                if (bank) bank.value = '';
+                if (accountNum) accountNum.value = '';
+                if (addAmount) addAmount.value = '';
+                if (addPin) addPin.value = '';
             }
         } catch (error) {
             alert(error.message || 'Failed to add money');
@@ -190,7 +242,12 @@ if (withdrawBtn) {
                 alert(`Successfully withdrew ৳${amount}`);
                 setInnerText(result.data.newBalance);
                 loadTransactionHistory();
-                document.getElementById("withdraw-amount").value = '';
+                const withdrawAgent = document.getElementById("withdraw-agent");
+                const withdrawAmount = document.getElementById("withdraw-amount");
+                const withdrawPin = document.getElementById("withdraw-pin");
+                if (withdrawAgent) withdrawAgent.value = '';
+                if (withdrawAmount) withdrawAmount.value = '';
+                if (withdrawPin) withdrawPin.value = '';
             }
         } catch (error) {
             alert(error.message || 'Failed to withdraw money');
@@ -235,8 +292,12 @@ if (transferBtn) {
                 alert(`Successfully transferred ৳${amount} to ${recipientAccountNo}`);
                 setInnerText(result.data.newBalance);
                 loadTransactionHistory();
-                document.getElementById("transfer-account").value = '';
-                document.getElementById("transfer-amount").value = '';
+                if (document.getElementById("transfer-bank")) document.getElementById("transfer-bank").value = '';
+                if (document.getElementById("transfer-account")) document.getElementById("transfer-account").value = '';
+                if (document.getElementById("transfer-name")) document.getElementById("transfer-name").value = '';
+                if (document.getElementById("transfer-amount")) document.getElementById("transfer-amount").value = '';
+                if (document.getElementById("transfer-note")) document.getElementById("transfer-note").value = '';
+                if (document.getElementById("transfer-pin")) document.getElementById("transfer-pin").value = '';
             }
         } catch (error) {
             alert(error.message || 'Transfer failed');
@@ -254,7 +315,7 @@ if (payBillBtn) {
         e.preventDefault();
         
         const billType = getInputValue("bill-type");
-        const billerId = getInputValue("biller-id");
+        const billerId = getInputValue("bill-account");
         const amount = getInputValueNumber("bill-amount");
         
         if (!billType) {
@@ -263,7 +324,7 @@ if (payBillBtn) {
         }
         
         if (!billerId) {
-            alert("Please enter biller ID");
+            alert("Please enter account or reference number");
             return;
         }
         
@@ -278,7 +339,7 @@ if (payBillBtn) {
         try {
             const result = await apiCall(API_CONFIG.ENDPOINTS.PAY_BILL, 'POST', {
                 billType,
-                billerId,
+                referenceNumber: billerId,
                 amount
             });
             
@@ -286,9 +347,14 @@ if (payBillBtn) {
                 alert(`Successfully paid ${billType} bill of ৳${amount}`);
                 setInnerText(result.data.newBalance);
                 loadTransactionHistory();
-                document.getElementById("bill-type").value = '';
-                document.getElementById("biller-id").value = '';
-                document.getElementById("bill-amount").value = '';
+                const billTypeEl = document.getElementById("bill-type");
+                const billAccount = document.getElementById("bill-account");
+                const billAmount = document.getElementById("bill-amount");
+                const billPin = document.getElementById("bill-pin");
+                if (billTypeEl) billTypeEl.value = '';
+                if (billAccount) billAccount.value = '';
+                if (billAmount) billAmount.value = '';
+                if (billPin) billPin.value = '';
             }
         } catch (error) {
             alert(error.message || 'Bill payment failed');
@@ -333,6 +399,8 @@ if (takeLoanBtn) {
         const duration = getInputValueNumber("loan-duration");
         const purpose = getInputValue("loan-purpose");
         
+        console.log('Loan form values:', { bank, loanType, amount, duration, purpose });
+        
         if (!bank || !loanType || amount <= 0 || duration <= 0) {
             alert("Please fill in all loan details including bank selection");
             return;
@@ -355,9 +423,18 @@ if (takeLoanBtn) {
                 setInnerText(result.data.newBalance);
                 loadTransactionHistory();
                 checkLoanEligibility();
-                document.getElementById("loan-type").value = '';
-                document.getElementById("loan-amount").value = '';
-                document.getElementById("loan-duration").value = '';
+                const loanBank = document.getElementById("loan-bank");
+                const loanType = document.getElementById("loan-type");
+                const loanAmount = document.getElementById("loan-amount");
+                const loanDuration = document.getElementById("loan-duration");
+                const loanPurpose = document.getElementById("loan-purpose");
+                const takeLoanPin = document.getElementById("take-loan-pin");
+                if (loanBank) loanBank.value = '';
+                if (loanType) loanType.value = '';
+                if (loanAmount) loanAmount.value = '';
+                if (loanDuration) loanDuration.value = '';
+                if (loanPurpose) loanPurpose.value = '';
+                if (takeLoanPin) takeLoanPin.value = '';
             }
         } catch (error) {
             alert(error.message || 'Loan application failed');
@@ -461,7 +538,10 @@ if (payLoanBtn) {
                 setInnerText(result.data.newBalance);
                 loadTransactionHistory();
                 loadActiveLoan();
-                document.getElementById("pay-loan-amount").value = '';
+                const payLoanAmount = document.getElementById("pay-loan-amount");
+                const payLoanPin = document.getElementById("pay-loan-pin");
+                if (payLoanAmount) payLoanAmount.value = '';
+                if (payLoanPin) payLoanPin.value = '';
             }
         } catch (error) {
             alert(error.message || 'Loan payment failed');

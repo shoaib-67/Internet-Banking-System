@@ -17,6 +17,8 @@ const transactionRoutes = require('./routes/transactions');
 const loanRoutes = require('./routes/loans');
 const billRoutes = require('./routes/bills');
 const employeeRoutes = require('./routes/employees');
+const adminRoutes = require('./routes/admin');
+const managerRoutes = require('./routes/manager');
 
 
 app.use('/api/auth', authRoutes);
@@ -24,6 +26,8 @@ app.use('/api/transactions', transactionRoutes);
 app.use('/api/loans', loanRoutes);
 app.use('/api/bills', billRoutes);
 app.use('/api/employees', employeeRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/manager', managerRoutes);
 
 
 app.get('/api/health', (req, res) => {

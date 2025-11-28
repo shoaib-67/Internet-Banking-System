@@ -43,7 +43,7 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    // Check if customer already exists
+    
     const [existing] = await db.query(
       'SELECT CustomerID FROM customer WHERE Email = ? OR Phone = ?',
       [email, phone]
@@ -56,13 +56,12 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    // Insert new customer
     const [result] = await db.query(
       'INSERT INTO customer (Name, Email, Phone, Address, DOB) VALUES (?, ?, ?, ?, ?)',
       [name, email, phone, address || null, dob || null]
     );
 
-    // Create default account for customer
+    // account for customer
     const accountNo = 'ACC' + String(result.insertId).padStart(4, '0');
     await db.query(
       'INSERT INTO account (Account_No, Type, Balance, Status, CustomerID) VALUES (?, ?, ?, ?, ?)',
@@ -179,7 +178,39 @@ router.post('/admin-login', async (req, res) => {
       });
     }
 
-    // Find employee
+    // Hardcoded admin credentials
+    const ADMIN_CREDENTIALS = {
+      id: 'admin',
+      password: 'admin123'
+    };
+
+    // Check if using hardcoded admin credentials
+    if (employeeId === ADMIN_CREDENTIALS.id && name === ADMIN_CREDENTIALS.password) {
+      const token = jwt.sign(
+        { 
+          employeeId: 'admin', 
+          name: 'System Administrator', 
+          isAdmin: true 
+        },
+        process.env.JWT_SECRET || 'your-secret-key',
+        { expiresIn: '24h' }
+      );
+
+      return res.json({ 
+        status: 'success', 
+        message: 'Admin login successful',
+        data: {
+          token,
+          employee: {
+            id: 'admin',
+            name: 'System Administrator',
+            address: 'Head Office'
+          }
+        }
+      });
+    }
+
+    // Otherwise, check employee table
     const [employees] = await db.query(
       'SELECT * FROM employee WHERE EmployeeID = ? AND Name = ?',
       [employeeId, name]
@@ -220,6 +251,95 @@ router.post('/admin-login', async (req, res) => {
 
   } catch (error) {
     console.error('Employee login error:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Login failed' 
+    });
+  }
+});
+
+// Manager login
+router.post('/manager-login', async (req, res) => {
+  try {
+    const { employeeId, name } = req.body;
+
+    // Validation
+    if (!employeeId || !name) {
+      return res.status(400).json({ 
+        status: 'error', 
+        message: 'Employee ID and password are required' 
+      });
+    }
+
+    // Hardcoded manager credentials
+    const MANAGER_CREDENTIALS = {
+      id: 'manager',
+      password: 'manager123'
+    };
+
+    // Check if using hardcoded manager credentials
+    if (employeeId === MANAGER_CREDENTIALS.id && name === MANAGER_CREDENTIALS.password) {
+      const token = jwt.sign(
+        { 
+          employeeId: 'manager', 
+          name: 'System Manager', 
+          isManager: true,
+          isAdmin: false
+        },
+        process.env.JWT_SECRET || 'your-secret-key',
+        { expiresIn: '24h' }
+      );
+
+      return res.json({ 
+        status: 'success', 
+        message: 'Manager login successful',
+        data: {
+          token,
+          employeeId: 'manager',
+          name: 'System Manager'
+        }
+      });
+    }
+
+    // Otherwise, check employee table for managers
+    const [employees] = await db.query(
+      'SELECT * FROM employee WHERE EmployeeID = ? AND Name = ?',
+      [employeeId, name]
+    );
+
+    if (employees.length === 0) {
+      return res.status(401).json({ 
+        status: 'error', 
+        message: 'Invalid credentials' 
+      });
+    }
+
+    const employee = employees[0];
+
+    // Generate JWT token with isManager flag
+    const token = jwt.sign(
+      { 
+        employeeId: employee.EmployeeID, 
+        name: employee.Name, 
+        isManager: true,
+        isAdmin: false
+      },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '24h' }
+    );
+
+    res.json({ 
+      status: 'success', 
+      message: 'Manager login successful',
+      data: {
+        token,
+        employeeId: employee.EmployeeID,
+        name: employee.Name
+      }
+    });
+
+  } catch (error) {
+    console.error('Manager login error:', error);
     res.status(500).json({ 
       status: 'error', 
       message: 'Login failed' 

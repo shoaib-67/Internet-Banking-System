@@ -1,7 +1,7 @@
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
-// Create MySQL connection pool
+// MySQL connection pool
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
@@ -12,5 +12,4 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-// Export the pool - connection testing is done in server.js
 module.exports = pool;

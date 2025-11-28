@@ -25,14 +25,30 @@ router.get('/eligibility', authenticateToken, async (req, res) => {
     const loanCount = loans[0].count;
     const activeLoanBalance = parseFloat(activeLoans[0].total || 0);
 
+    // Count active loans (not fully paid)
+    const [activeLoansCount] = await db.query(
+      `SELECT COUNT(*) as count
+       FROM takes t
+       INNER JOIN repayment r ON t.LoanID = r.LoanID
+       WHERE t.AccountID = ? AND r.RemainingAmount > 0`,
+      [req.user.accountId]
+    );
+
+    const activeCount = activeLoansCount[0].count;
+    const maxTotalLoan = 3000;
+    const availableCredit = maxTotalLoan - activeLoanBalance;
+
     res.json({ 
       status: 'success',
       data: {
         loanCount,
         maxLoans: 3,
+        activeLoansCount: activeCount,
         activeLoanBalance,
+        maxTotalLoan,
+        availableCredit,
         hasActiveLoan: activeLoanBalance > 0,
-        canApply: loanCount < 3 && activeLoanBalance === 0
+        canApply: activeCount < 3 && activeLoanBalance < maxTotalLoan
       }
     });
 
@@ -80,34 +96,41 @@ router.post('/take-loan', authenticateToken, async (req, res) => {
 
     const account = accounts[0];
 
-    // Check loan count
-    const [loanCount] = await connection.query(
-      'SELECT COUNT(*) as count FROM takes WHERE AccountID = ?',
-      [req.user.accountId]
-    );
-
-    if (loanCount[0].count >= 3) {
-      await connection.rollback();
-      return res.status(400).json({ 
-        status: 'error', 
-        message: 'Maximum loan limit reached (3 loans)' 
-      });
-    }
-
-    // Check if account has active loan
-    const [activeLoans] = await connection.query(
-      `SELECT r.RemainingAmount 
+    // Check active loan count (not total loans)
+    const [activeLoansCount] = await connection.query(
+      `SELECT COUNT(*) as count
        FROM takes t
        INNER JOIN repayment r ON t.LoanID = r.LoanID
        WHERE t.AccountID = ? AND r.RemainingAmount > 0`,
       [req.user.accountId]
     );
 
-    if (activeLoans.length > 0) {
+    if (activeLoansCount[0].count >= 3) {
       await connection.rollback();
       return res.status(400).json({ 
         status: 'error', 
-        message: 'Please pay off existing loan before taking a new one' 
+        message: 'Maximum active loan limit reached (3 active loans)' 
+      });
+    }
+
+    // Check total active loan balance
+    const [activeLoanBalance] = await connection.query(
+      `SELECT SUM(r.RemainingAmount) as total
+       FROM takes t
+       INNER JOIN repayment r ON t.LoanID = r.LoanID
+       WHERE t.AccountID = ? AND r.RemainingAmount > 0`,
+      [req.user.accountId]
+    );
+
+    const currentLoanBalance = parseFloat(activeLoanBalance[0].total || 0);
+    const maxTotalLoan = 3000;
+    const availableCredit = maxTotalLoan - currentLoanBalance;
+
+    if (currentLoanBalance + parseFloat(amount) > maxTotalLoan) {
+      await connection.rollback();
+      return res.status(400).json({ 
+        status: 'error', 
+        message: `Loan amount exceeds limit. Available credit: ৳${availableCredit.toFixed(2)}` 
       });
     }
 

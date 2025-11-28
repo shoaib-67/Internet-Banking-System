@@ -315,34 +315,45 @@ router.post('/transfer', authenticateToken, async (req, res) => {
   }
 });
 
-// Get transaction history from RECORDS table
+// Get transaction history from payment_service table (better data source)
 router.get('/history', authenticateToken, async (req, res) => {
   try {
+    console.log('Fetching transaction history for account:', req.user.accountId);
+    
     const [transactions] = await db.query(
-      'SELECT * FROM records WHERE Account_ID = ? ORDER BY Date DESC LIMIT 50',
+      `SELECT PaymentID as id, Amount, PaymentDate as date, Status, 
+              BillType, Operation, Receiver as receiver
+       FROM payment_service
+       WHERE AccountID = ? 
+       ORDER BY PaymentDate DESC 
+       LIMIT 50`,
       [req.user.accountId]
     );
 
+    console.log(`Found ${transactions.length} transactions`);
+    
     res.json({ 
       status: 'success',
       data: {
         transactions: transactions.map(t => ({
-          id: t.Transaction_ID,
+          id: t.id,
           amount: parseFloat(t.Amount),
-          date: t.Date,
+          date: t.date,
           status: t.Status,
-          billType: 'Transaction',
-          receiver: 'Self',
-          operation: parseFloat(t.Amount) > 0 ? 'Credit' : 'Debit'
+          billType: t.BillType,
+          receiver: t.receiver || 'Self',
+          operation: t.Operation
         }))
       }
     });
 
   } catch (error) {
     console.error('Transaction history error:', error);
+    console.error('Error details:', error.message);
     res.status(500).json({ 
       status: 'error', 
-      message: 'Failed to fetch transactions' 
+      message: 'Failed to fetch transactions',
+      error: error.message
     });
   }
 });

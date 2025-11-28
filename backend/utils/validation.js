@@ -1,11 +1,11 @@
-// Validation helper functions
 
-// Validate phone number (Bangladesh format: 11 digits starting with 01)
+
+// Validate phone no
 const validatePhone = (phone) => {
   if (!phone) return { valid: false, message: 'Phone number is required' };
   
   const phoneStr = String(phone).trim();
-  const phoneRegex = /^01[0-9]{9}$/; // Bangladesh phone format
+  const phoneRegex = /^01[0-9]{9}$/; 
   
   if (!phoneRegex.test(phoneStr)) {
     return { 
@@ -17,7 +17,7 @@ const validatePhone = (phone) => {
   return { valid: true };
 };
 
-// Validate account number (format: ACC followed by 4 digits)
+// Validate account no
 const validateAccountNumber = (accountNo) => {
   if (!accountNo) return { valid: false, message: 'Account number is required' };
   
@@ -33,7 +33,7 @@ const validateAccountNumber = (accountNo) => {
   return { valid: true };
 };
 
-// Validate amount (must be positive number)
+// Validate amount 
 const validateAmount = (amount, min = 1, max = 1000000) => {
   if (amount === undefined || amount === null) {
     return { valid: false, message: 'Amount is required' };
@@ -75,7 +75,7 @@ const validateEmail = (email) => {
   return { valid: true };
 };
 
-// Validate name (2-100 characters, letters and spaces only)
+// Validate name 
 const validateName = (name) => {
   if (!name) return { valid: false, message: 'Name is required' };
   
@@ -100,9 +100,9 @@ const validateName = (name) => {
   return { valid: true, value: nameStr };
 };
 
-// Validate date of birth (must be at least 18 years old)
+// Validate date of birth 
 const validateDOB = (dob) => {
-  if (!dob) return { valid: true }; // DOB is optional in some cases
+  if (!dob) return { valid: true }; 
   
   const birthDate = new Date(dob);
   const today = new Date();
@@ -123,7 +123,7 @@ const validateDOB = (dob) => {
   return { valid: true };
 };
 
-// Validate loan amount (max ₹5000 as per business rules)
+// Validate loan amount 
 const validateLoanAmount = (amount) => {
   const result = validateAmount(amount, 100, 5000);
   

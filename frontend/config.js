@@ -25,6 +25,19 @@ const API_CONFIG = {
     PAY_BILL: '/bills/pay',
     BILL_HISTORY: '/bills/history',
     
+    // Admin
+    ADMIN_STATS: '/admin/stats',
+    ADMIN_USERS: '/admin/users',
+    ADMIN_TRANSACTIONS: '/admin/transactions',
+    ADMIN_LOANS: '/admin/loans',
+    
+    // Manager
+    MANAGER_LOGIN: '/auth/manager-login',
+    MANAGER_STATS: '/manager/stats',
+    MANAGER_USERS: '/manager/users',
+    MANAGER_TRANSACTIONS: '/manager/transactions',
+    MANAGER_LOANS: '/manager/loans',
+    
     // Health Check
     HEALTH: '/health'
   }

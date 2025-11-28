@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Dashboard - Payooo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <!-- Navbar -->
+    <div class="navbar bg-blue-600 text-white shadow-lg">
+        <div class="flex-1">
+            <a class="btn btn-ghost normal-case text-xl">
+                <i class="fas fa-user-tie mr-2"></i>
+                Manager Dashboard
+            </a>
+        </div>
+        <div class="flex-none gap-2">
+            <div class="dropdown dropdown-end">
+                <label tabindex="0" class="btn btn-ghost btn-circle avatar placeholder">
+                    <div class="bg-blue-800 text-white rounded-full w-10">
+                        <i class="fas fa-user-tie text-xl"></i>
+                    </div>
+                </label>
+                <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-gray-800">
+                    <li class="menu-title">
+                        <span id="manager-name">Manager</span>
+                    </li>
+                    <li><a id="logout-btn"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto p-6">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="stat bg-white shadow-lg rounded-lg">
+                <div class="stat-figure text-primary">
+                    <i class="fas fa-users text-4xl"></i>
+                </div>
+                <div class="stat-title">Total Users</div>
+                <div class="stat-value text-primary" id="total-users">0</div>
+                <div class="stat-desc">Active customers</div>
+            </div>
+            
+            <div class="stat bg-white shadow-lg rounded-lg">
+                <div class="stat-figure text-secondary">
+                    <i class="fas fa-exchange-alt text-4xl"></i>
+                </div>
+                <div class="stat-title">Transactions</div>
+                <div class="stat-value text-secondary" id="total-transactions">0</div>
+                <div class="stat-desc">Total processed</div>
+            </div>
+            
+            <div class="stat bg-white shadow-lg rounded-lg">
+                <div class="stat-figure text-warning">
+                    <i class="fas fa-hand-holding-usd text-4xl"></i>
+                </div>
+                <div class="stat-title">Active Loans</div>
+                <div class="stat-value text-warning" id="active-loans">0</div>
+                <div class="stat-desc">Currently active</div>
+            </div>
+            
+            <div class="stat bg-white shadow-lg rounded-lg">
+                <div class="stat-figure text-success">
+                    <i class="fas fa-dollar-sign text-4xl"></i>
+                </div>
+                <div class="stat-title">Total Balance</div>
+                <div class="stat-value text-success" id="total-balance">0</div>
+                <div class="stat-desc">All accounts</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs tabs-boxed bg-white shadow-lg mb-4">
+            <a class="tab tab-active" id="users-tab">
+                <i class="fas fa-users mr-2"></i>Users
+            </a>
+            <a class="tab" id="transactions-tab">
+                <i class="fas fa-exchange-alt mr-2"></i>Transactions
+            </a>
+            <a class="tab" id="loans-tab">
+                <i class="fas fa-hand-holding-usd mr-2"></i>Loans
+            </a>
+            <a class="tab" id="reports-tab">
+                <i class="fas fa-chart-bar mr-2"></i>Reports
+            </a>
+        </div>
+
+        <!-- Users Section -->
+        <div id="users-section" class="card bg-white shadow-lg">
+            <div class="card-body">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="card-title">
+                        <i class="fas fa-users mr-2"></i>Customer Accounts
+                    </h2>
+                    <div class="badge badge-info">View Only</div>
+                </div>
+                
+                <div class="form-control mb-4">
+                    <input type="text" id="search-users" placeholder="Search by account, name, or phone..." 
+                           class="input input-bordered w-full max-w-xs" />
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra">
+                        <thead>
+                            <tr>
+                                <th>Account Number</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Balance</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    <span class="loading loading-spinner loading-lg"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Section -->
+        <div id="transactions-section" class="card bg-white shadow-lg" style="display:none;">
+            <div class="card-body">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="card-title">
+                        <i class="fas fa-exchange-alt mr-2"></i>Recent Transactions
+                    </h2>
+                    <div class="badge badge-info">View Only</div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Account</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactions-table-body">
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    <span class="loading loading-spinner loading-lg"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loans Section -->
+        <div id="loans-section" class="card bg-white shadow-lg" style="display:none;">
+            <div class="card-body">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="card-title">
+                        <i class="fas fa-hand-holding-usd mr-2"></i>Active Loans
+                    </h2>
+                    <div class="badge badge-info">View Only</div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra">
+                        <thead>
+                            <tr>
+                                <th>Loan ID</th>
+                                <th>Account</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Remaining</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="loans-table-body">
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    <span class="loading loading-spinner loading-lg"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Section -->
+        <div id="reports-section" class="card bg-white shadow-lg" style="display:none;">
+            <div class="card-body">
+                <h2 class="card-title mb-4">System Reports (View Only)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="btn btn-primary" onclick="generateReport('daily')">
+                        <i class="fas fa-file-alt mr-2"></i>Daily Report
+                    </button>
+                    <button class="btn btn-primary" onclick="generateReport('monthly')">
+                        <i class="fas fa-file-alt mr-2"></i>Monthly Report
+                    </button>
+                    <button class="btn btn-primary" onclick="generateReport('users')">
+                        <i class="fas fa-users mr-2"></i>User Report
+                    </button>
+                    <button class="btn btn-primary" onclick="generateReport('loans')">
+                        <i class="fas fa-hand-holding-usd mr-2"></i>Loan Report
+                    </button>
+                </div>
+                <div id="report-output" class="mt-6 p-4 bg-gray-50 rounded-lg" style="display:none;">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-bold text-lg" id="report-title"></h3>
+                        <button class="btn btn-sm btn-ghost" onclick="downloadReport()">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                    <div id="report-content" class="text-sm"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <dialog id="user-details-modal" class="modal">
+        <div class="modal-box max-w-2xl">
+            <h3 class="font-bold text-lg mb-4">Customer Details (View Only)</h3>
+            <div id="user-details-content" class="space-y-4">
+                <div class="loading loading-spinner loading-lg mx-auto"></div>
+            </div>
+            <div class="modal-action">
+                <form method="dialog">
+                    <button class="btn">Close</button>
+                </form>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+
+    <script src="./config.js"></script>
+    <script src="./manager-dashboard.js"></script>
+</body>
+</html>
