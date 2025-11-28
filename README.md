@@ -4,9 +4,9 @@ A comprehensive full-stack web-based banking application built with Node.js, Exp
 
 ---
 
-## 🌟 Features
+##  Features
 
-### 👤 Customer Portal
+###  Customer Portal
 
 #### Account Management
 - **User Registration**: Create new accounts with personal information (name, email, phone, address, date of birth)
@@ -49,7 +49,7 @@ A comprehensive full-stack web-based banking application built with Node.js, Exp
 
 ---
 
-### 👨‍💼 Manager Portal
+### Manager Portal
 
 #### View-Only Dashboard
 - **Dashboard Statistics**:
@@ -85,7 +85,7 @@ A comprehensive full-stack web-based banking application built with Node.js, Exp
 
 ---
 
-### 🔐 Admin Portal
+### Admin Portal
 
 #### Full Administrative Control
 - **Dashboard Statistics**: Same as Manager plus additional metrics
@@ -120,7 +120,7 @@ A comprehensive full-stack web-based banking application built with Node.js, Exp
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Backend
 - **Runtime**: Node.js
@@ -152,7 +152,7 @@ A comprehensive full-stack web-based banking application built with Node.js, Exp
 
 ---
 
-## 🔒 Security Features
+## Security Features
 
 - JWT-based authentication with token expiration (24 hours)
 - Role-based access control (Customer, Manager, Admin)
@@ -165,7 +165,7 @@ A comprehensive full-stack web-based banking application built with Node.js, Exp
 
 ---
 
-## 💳 Transaction System
+## Transaction System
 
 ### Transaction Types
 1. **Deposit** (Add Money)
@@ -200,18 +200,18 @@ A comprehensive full-stack web-based banking application built with Node.js, Exp
 
 ---
 
-## 📊 Loan System Rules
+## Loan System Rules
 
 - **Maximum Active Loans**: 3 loans at any time
-- **Maximum Total Balance**: ₹3,000 across all active loans
-- **Available Credit**: Calculated as (₹3,000 - current outstanding balance)
+- **Maximum Total Balance**: 3,000 across all active loans
+- **Available Credit**: Calculated as (3,000 - current outstanding balance)
 - **Interest Rates**: Varies by loan type (Personal, Business, Education)
 - **Repayment Tracking**: Real-time remaining balance updates
 - **Eligibility Check**: Automatic validation before loan approval
 
 ---
 
-## 👥 User Roles & Credentials
+## User Roles & Credentials
 
 ### Customer
 - **Login**: Phone number + Account number
@@ -232,7 +232,7 @@ A comprehensive full-stack web-based banking application built with Node.js, Exp
 
 ---
 
-## 🎨 User Interface Features
+## User Interface Features
 
 - Responsive design for all screen sizes
 - Modern card-based layout with DaisyUI components
@@ -246,7 +246,7 @@ A comprehensive full-stack web-based banking application built with Node.js, Exp
 
 ---
 
-## 📱 Dashboard Features
+## Dashboard Features
 
 ### Customer Dashboard
 - Balance display card
@@ -270,7 +270,7 @@ A comprehensive full-stack web-based banking application built with Node.js, Exp
 
 ---
 
-## 🔄 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /api/auth/register` - Customer registration
@@ -313,7 +313,7 @@ A comprehensive full-stack web-based banking application built with Node.js, Exp
 
 ---
 
-## 📦 Project Structure
+## Project Structure
 
 ```
 Internet_Banking_System/
@@ -359,9 +359,9 @@ Internet_Banking_System/
 
 ---
 
-## 🚀 Features Summary
+## Features Summary
 
-### ✅ Implemented Features
+### Implemented Features
 - [x] User registration and authentication
 - [x] Customer dashboard with balance display
 - [x] Money transactions (Add, Cash Out, Transfer)
@@ -397,13 +397,13 @@ Internet_Banking_System/
 
 ---
 
-## 📝 License
+## License
 
 This project is developed for educational purposes.
 
 ---
 
-## 👨‍💻 Developer Notes
+## Notes
 
 - All monetary values are stored with 2 decimal precision
 - Transactions use database transactions for atomicity
@@ -413,11 +413,3 @@ This project is developed for educational purposes.
 - Account numbers auto-generated: ACC0001, ACC0002, etc.
 
 ---
-
-## 🆘 Support
-
-For issues or questions, please contact the development team or check the project documentation.
-
----
-
-**Built with ❤️ for modern banking experience**
